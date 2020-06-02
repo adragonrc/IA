@@ -31,11 +31,9 @@
     </div>
 </body>
 </html>
+<%- include('./partials/Jsons.html') %>
 
 <script>
-    
-
-
     function clearTable(){
         while (tbody.hasChildNodes()){
             tbody.removeChild(tbody.lastChild);
@@ -64,8 +62,8 @@
         map[0] = new Array(cols +2);
         map[rows + 1] = new Array(cols +2);
         for(var i = 0; i< cols+2; i++ ){
-            map[0][i] = new node('-', -1);
-            map[rows + 1][i] = new node('-', -1);
+            map[0][i] = new Node('-', -1, 0, i);
+            map[rows + 1][i] = new Node('-', -1, rows + 1, i);
         }
         var started;
         var ending;
@@ -74,11 +72,11 @@
             var fila = "<tr>";
             
             map[i] = new Array(cols + 2);
-            map[i][0] = new node('-', -1);
+            map[i][0] = new Node('-', -1, i, 0);
 
             for(var j = 1; j <= cols; j+=1){
                 //add col
-                map[i][j] = new node(input[pos], pos);
+                var node = new Node(input[pos], pos, i, j);
                 var c = input[pos];
                 var typeClass;
                 if(c == '*'){
@@ -88,22 +86,22 @@
                         typeClass ="obstaculo";
                     }else{
                         if(c == '#'){
-                            started = new Point(i, j);
+                            started = node;
                             typeClass ="inicio";
                         }else{
                             if(c == '$'){
-                                ending = new Point(i, j);
                                 typeClass ="final";
+                                ending = node;
                             }
                         }
                     }
                 }
-               
-                fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'></td>");
+                map[i][j] = node;
+                fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'>"+pos+"</td>");
                 pos += 1;
             }
            
-            map[i][cols+ 1] = new node('-', -1);
+            map[i][cols+ 1] = new Node('-', -1, i, cols + 1);
             fila = fila.concat("</tr>");
             tbody.insertAdjacentHTML('beforeend', fila);
             //add row
@@ -111,17 +109,17 @@
         }
 
         var mMaze = new Maze(map, started, ending);
-        mMaze.profundidade(started);
-        printPath(mMaze.path, rows, cols);
+        mMaze.f(started);
+        printPath(mMaze.ending.parent, rows, cols);
     }
     
-    function printPath(path, rows, cols){
-        console.log("length", path.length);
-        for(var i = 1; i<path.length; i++){
+    function printPath(nodo, rows, cols){
+      //  console.log("length", path.length);
+        while(nodo != null && nodo.c != '#'){
           //  console.log("move to: " , path[i]);
-            //console.log("move to: " , path[i]);
-
-            document.getElementById(path[i]).style.backgroundColor = 'yellow';
+            console.log("parent: " , nodo.id);
+            document.getElementById(nodo.id).style.backgroundColor = 'yellow';
+            nodo = nodo.parent;
         }
     }
 </script>

@@ -1,39 +1,29 @@
-
-
-class node{
-    constructor(c, id, x, y, parent){
+<script>
+class Node{
+    constructor(c, id, x, y){
         this.c = c;
         this.canMove =  c !='-' && c !='#';
         this.id = id;
         this.x = x;
         this.y = y;
-        this.parent = parent;
+        this.parent = null;
         this.childs = new Array();
     }
     isFin(){
-        return c == '$';
+        return this.c == '$';
     }
     addChild(child){
         this.childs.push(child);
         child.parent = this
     }
 }
-class Thread{
-    constructor(){
-        this.nodoInicial = null;
-    }
-}
-
 
 class Maze{        
-    constructor(map, start) {
+    constructor(map, start, ending) {
         this.map = map;
         this.start = start;
+        this.ending = ending;
         this.lista = new Array(start);
-    }
-
-    isFin2(){
-        return this.lista[0].isFin();
     }
     
     moverTop(node){
@@ -49,49 +39,38 @@ class Maze{
         return this.map[node.x][node.y-1];
     }
 
+    moveTo(node, nodePos){
+        if(node.canMove){
+            this.lista.push(node);
+            node.canMove = false;
+            nodePos.addChild(node);
+        }
+    }
+
     addNeighBords(){
         var nodePos = this.lista.pop();
 
-        var node = nodePos.moverBott();
-        if(node.canMove){
-            lista.push(node);
-        }
-        node = this.nodePos.moverRigth();
-        if(node.canMove){
-            lista.push(node);
-        }
-        node = this.nodePos.moverLefth();
-        if(node.canMove){
-            lista.push(node);
-        }
-        node = this.nodePos.moverTop();
-        if(node.canMove){
-            lista.push(node);
-        }
+        var node = this.moverBott(nodePos);
+        this.moveTo(node, nodePos);
+        node = this.moverLefth(nodePos);
+        this.moveTo(node, nodePos);
+        node = this.moverTop(nodePos);
+        this.moveTo(node, nodePos);
+        node = this.moverRigth(nodePos);
+        this.moveTo(node, nodePos);
         
         return nodePos;
     }
 
     f(node){
-        if(isFin2()){
+        if(node.isFin()){
             return true;
         }
-        
-        nodePos = this.addNeighBords();
-        if(node != null) node.addChild(nodePos);
+        var nodePos = this.addNeighBords();
 
         return this.f(nodePos);
     }
 
-    moveTo(point){
-        this.map[point.x][point.y].canMove = false;
-        this.path.push(this.map[point.x][point.y].id);
-        var isFin = this.profundidade(point);
-        if(!isFin) this.path.pop();
-    //     console.log("id path", this.path[this.path.length]);
-        
-        return isFin;
-    }
 
     isfin(point){
         return this.map[point.x][point.y].c == '$';
@@ -122,3 +101,6 @@ class Maze{
         return isFin;
     }
 }
+
+    
+</script>
