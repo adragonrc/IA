@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA</title>
+    
+    <%- include('./partials/head.html') %>
+</head>
+<body>
+    <%- include('./partials/navbar.html') %>
+    <div class="container p-5" >
+        <div class="row">
+            <label for="textArea">Ingresa los datos</label>
+        </div>
+        <div class="row">
+            <div class="col-sm"><textarea id="textArea" cols="50" rows="20"></textarea></div>
+            <div class="col-sm" >
+                <a href="#table" >ir a la tabla</a>
+                <button onclick="readImput()" style="align-self: center;">Siguiente</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-5" id="table">
+        <table style="width: 100%; height: 100%;">
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+
+<script>
+    class node{
+        constructor(c, id){
+            this.c = c;
+            this.canMove =  c !='-' && c !='#';
+         //   console.log("move", this.canMove);
+            this.id = id;
+        }
+    }
+    class Point{
+        constructor(x, y){
+            this.x = x;
+            this.y = y;
+        }
+        moverTop(){
+            return new Point(this.x-1, this.y);
+        }
+        moverBott(){
+            return new Point(this.x+1, this.y);
+        }
+        moverRigth(){
+            return new Point(this.x, this.y+1);
+        }
+        moverLefth(){
+            return new Point(this.x, this.y-1);
+        }
+    }
+    class Maze{
+        constructor(map, start, ending) {
+            this.map = map;
+            this.start = start;
+            this.ending = ending;
+            this.path = [9];
+        }
+
+        canMove(point){
+            console.log("" , point.x+ ", " +point.y);
+            console.log("id: " , this.map[point.x][point.y].id);
+            console.log("can Move: " , this.map[point.x][point.y].canMove);
+            return this.map[point.x][point.y].canMove;
+        }
+        moveTo(point){
+            this.map[point.x][point.y].canMove = false;
+            this.path.push(this.map[point.x][point.y].id);
+            var isFin = this.profundidade(point);
+            if(!isFin) this.path.pop();
+       //     console.log("id path", this.path[this.path.length]);
+           
+            return isFin;
+        }
+
+        isfin(point){
+            return this.map[point.x][point.y].c == '$';
+        }
+        
+        profundidade(posicion){
+            if(this.isfin(posicion)){
+                return true;
+            }
+            var isFin = false;
+            
+            var p = posicion.moverTop();
+            if(!isFin && this.canMove(p)){
+                isFin = this.moveTo(p);
+            }
+            p = posicion.moverRigth();
+            if(!isFin && this.canMove(p)){
+                isFin = this.moveTo(p);
+            }
+            p = posicion.moverLefth();
+            if(!isFin && this.canMove(p)){
+                isFin = this.moveTo(p);
+            }
+            p = posicion.moverBott();
+            if(!isFin && this.canMove(p)){
+                isFin = this.moveTo(p);
+            }
+            return isFin;
+        }
+    }
+
+
+
+    function clearTable(){
+        while (tbody.hasChildNodes()){
+            tbody.removeChild(tbody.lastChild);
+        }
+    }
+    function readImput(){
+        clearTable();
+        var input = document.getElementById('textArea').value;
+        var tbody = document.getElementById('tbody');
+        var rows = 0;
+        var cols = 0;
+        var pos = 0;
+        while(input[pos] != ' ' && pos<input.length){
+            rows = parseInt(10*rows) + parseInt(input[pos]);
+            pos++;
+        }
+        pos ++;
+        while(input[pos] != '\n' && pos<input.length){
+            cols = parseInt(10*cols) + parseInt(input[pos]);
+            pos++;
+        }
+        pos++;
+
+        var map = new Array(rows + 2);
+        map[0] = new Array(cols +2);
+        map[rows + 1] = new Array(cols +2);
+        for(var i = 0; i< cols+2; i++ ){
+            map[0][i] = new node('-', -1);
+            map[rows + 1][i] = new node('-', -1);
+        }
+        var started;
+        var ending;
+
+        for(var i=1; i <= rows; i += 1){
+            var fila = "<tr>";
+            
+            map[i] = new Array(cols + 2);
+            map[i][0] = new node('-', -1);
+
+            for(var j = 1; j <= cols; j+=1){
+                //add col
+                map[i][j] = new node(input[pos], pos);
+                var c = input[pos];
+                var typeClass;
+                if(c == '*'){
+                    typeClass ="camino";
+                }else{
+                    if(c == '-'){
+                        typeClass ="obstaculo";
+                    }else{
+                        if(c == '#'){
+                            started = new Point(i, j);
+                            typeClass ="inicio";
+                        }else{
+                            if(c == '$'){
+                                ending = new Point(i, j);
+                                typeClass ="final";
+                            }
+                        }
+                    }
+                }
+               
+                fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'></td>");
+                pos += 1;
+            }
+           
+            map[i][cols+ 1] = new node('-', -1);
+            fila = fila.concat("</tr>");
+            tbody.insertAdjacentHTML('beforeend', fila);
+            //add row
+            pos += 1;
+        }
+
+        var mMaze = new Maze(map, started, ending);
+        mMaze.profundidade(started);
+        printPath(mMaze.path, rows, cols);
+    }
+    
+    function printPath(path, rows, cols){
+        console.log("length", path.length);
+        for(var i = 1; i<path.length; i++){
+          //  console.log("move to: " , path[i]);
+            //console.log("move to: " , path[i]);
+
+            document.getElementById(path[i]).style.backgroundColor = 'yellow';
+        }
+    }
+</script>
