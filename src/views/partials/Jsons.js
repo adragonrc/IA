@@ -15,25 +15,21 @@ class node{
     }
     addChild(child){
         this.childs.push(child);
+        child.parent = this
     }
 }
 class Thread{
     constructor(){
         this.nodoInicial = null;
     }
-    addNodo(parent, child){
-        if(this.nodoInicial == null) this.nodoInicial = parent;
-        else{
-            this.parent.addChild(child);
-        }
-    }
 }
+
+
 class Maze{        
     constructor(map, start) {
         this.map = map;
         this.start = start;
         this.lista = new Array(start);
-        this.graph = null;
     }
 
     isFin2(){
@@ -55,34 +51,36 @@ class Maze{
 
     addNeighBords(){
         var nodePos = this.lista.pop();
-        this.graph.add
+
         var node = nodePos.moverBott();
         if(node.canMove){
             lista.push(node);
         }
-        node = this.lista[0].moverRigth();
+        node = this.nodePos.moverRigth();
         if(node.canMove){
             lista.push(node);
         }
-        node = this.lista[0].moverLefth();
+        node = this.nodePos.moverLefth();
         if(node.canMove){
             lista.push(node);
         }
-        node = this.lista[0].moverTop();
+        node = this.nodePos.moverTop();
         if(node.canMove){
             lista.push(node);
         }
         
+        return nodePos;
     }
 
-    f(){
+    f(node){
         if(isFin2()){
             return true;
         }
+        
+        nodePos = this.addNeighBords();
+        if(node != null) node.addChild(nodePos);
 
-        this.addNeighBords();
-
-        return this.f();
+        return this.f(nodePos);
     }
 
     moveTo(point){
