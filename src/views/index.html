@@ -11,18 +11,49 @@
     <%- include('./partials/navbar.html') %>
     <div class="container p-5" >
         <div class="row">
-            <label for="textArea">Ingresa los datos</label>
-        </div>
-        <div class="row">
-            <div class="col-sm"><textarea id="textArea" cols="50" rows="20"></textarea></div>
+            <div class="col-sm" style="color: aliceblue;">
+                <div class="row">
+                    <div class="form-check form-check-inline ">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1">
+                        <label class="form-check-label" for="inlineRadio1"><h3>Profundidad</h3></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-check form-check-inline ">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2">
+                        <label class="form-check-label" for="inlineRadio2"><h3>largura</h3></label>
+                    </div>
+                </div>
+                <div class="row" >
+                    <div class="form-check form-check-inline ">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3">
+                        <label class="form-check-label" for="inlineRadio3"><h3>Best-First</h3></label>
+                    </div>
+                </div><div class="row">
+                    <div class="form-check form-check-inline ">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4">
+                        <label class="form-check-label" for="inlineRadio4"><h3>A*</h3></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-check form-check-inline ">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="Hill Climbing">
+                        <label class="form-check-label" for="inlineRadio5"><h3>Hill Climbing</h3></label>
+                    </div>
+                </div>
+            </div>
             <div class="col-sm" >
-                <a href="#table" >ir a la tabla</a>
-                <button onclick="readImput()" style="align-self: center;">Siguiente</button>
+                <a class="btn btn-primary" href="#table" onclick="readImput()" >ir a la tabla</a>
+            </div>
+            
+            <div class="col-sm">
+                <textarea id="textArea" cols="40" placeholder="Ingresa el imput" rows="20"></textarea>
             </div>
         </div>
     </div>
 
     <div class="container p-5" id="table">
+        <h1 id= "tituloTabla" style="color: white; text-align: center; margin-bottom: 15px;"></h1>
         <table style="width: 100%; height: 100%;">
             <tbody id="tbody">
 
@@ -34,6 +65,24 @@
 <%- include('./partials/Jsons.html') %>
 
 <script>
+    function getAlgortim(){
+        if (document.getElementById('inlineRadio1').checked) {
+           return 1;
+        }
+        if (document.getElementById('inlineRadio2').checked) {
+           return 2;
+        }
+        if (document.getElementById('inlineRadio3').checked) {
+           return 3;
+        }
+        if (document.getElementById('inlineRadio4').checked) {
+           return 4;
+        }
+        if (document.getElementById('inlineRadio5').checked) {
+           return 5;
+        }
+    }
+
     function clearTable(){
         while (tbody.hasChildNodes()){
             tbody.removeChild(tbody.lastChild);
@@ -42,6 +91,7 @@
 
     function readImput(){
         clearTable();
+        var algoritmo = getAlgortim();
         var input = document.getElementById('textArea').value;
         var tbody = document.getElementById('tbody');
         var rows = 0;
@@ -97,7 +147,7 @@
                     }
                 }
                 map[i][j] = node;
-                fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'>"+pos+"</td>");
+                fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'></td>");
                 pos += 1;
             }
            
@@ -109,8 +159,9 @@
         }
 
         var mMaze = new Maze(map, started, ending);
-        mMaze.algoritmo = 1;
-        mMaze.f(started);
+        mMaze.algoritmo = algoritmo;
+        var title = mMaze.execute();
+        document.getElementById('tituloTabla').innerText= title;
         printPath(mMaze.ending.parent, rows, cols);
     }
     
