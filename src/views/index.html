@@ -33,86 +33,7 @@
 </html>
 
 <script>
-    class node{
-        constructor(c, id){
-            this.c = c;
-            this.canMove =  c !='-' && c !='#';
-         //   console.log("move", this.canMove);
-            this.id = id;
-        }
-    }
-    class Point{
-        constructor(x, y){
-            this.x = x;
-            this.y = y;
-        }
-        moverTop(){
-            return new Point(this.x-1, this.y);
-        }
-        moverBott(){
-            return new Point(this.x+1, this.y);
-        }
-        moverRigth(){
-            return new Point(this.x, this.y+1);
-        }
-        moverLefth(){
-            return new Point(this.x, this.y-1);
-        }
-    }
-    class Maze{
-        constructor(map, start, ending) {
-            this.map = map;
-            this.start = start;
-            this.ending = ending;
-            this.path = [9];
-        }
-
-        canMove(point){
-            console.log("" , point.x+ ", " +point.y);
-            console.log("id: " , this.map[point.x][point.y].id);
-            console.log("can Move: " , this.map[point.x][point.y].canMove);
-            return this.map[point.x][point.y].canMove;
-        }
-        moveTo(point){
-            this.map[point.x][point.y].canMove = false;
-            this.path.push(this.map[point.x][point.y].id);
-            var isFin = this.profundidade(point);
-            if(!isFin) this.path.pop();
-       //     console.log("id path", this.path[this.path.length]);
-           
-            return isFin;
-        }
-
-        isfin(point){
-            return this.map[point.x][point.y].c == '$';
-        }
-        
-        profundidade(posicion){
-            if(this.isfin(posicion)){
-                return true;
-            }
-            var isFin = false;
-            
-            var p = posicion.moverTop();
-            if(!isFin && this.canMove(p)){
-                isFin = this.moveTo(p);
-            }
-            p = posicion.moverRigth();
-            if(!isFin && this.canMove(p)){
-                isFin = this.moveTo(p);
-            }
-            p = posicion.moverLefth();
-            if(!isFin && this.canMove(p)){
-                isFin = this.moveTo(p);
-            }
-            p = posicion.moverBott();
-            if(!isFin && this.canMove(p)){
-                isFin = this.moveTo(p);
-            }
-            return isFin;
-        }
-    }
-
+    
 
 
     function clearTable(){
@@ -120,6 +41,7 @@
             tbody.removeChild(tbody.lastChild);
         }
     }
+
     function readImput(){
         clearTable();
         var input = document.getElementById('textArea').value;
