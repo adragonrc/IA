@@ -24,6 +24,7 @@ class Maze{
         this.start = start;
         this.ending = ending;
         this.lista = new Array(start);
+        this.algoritmo = 0;
     }
     
     moverTop(node){
@@ -38,10 +39,16 @@ class Maze{
     moverLefth(node){
         return this.map[node.x][node.y-1];
     }
-
+    mPush(node){
+        if(this.algoritmo == 0){
+            this.lista.push(node);
+        }else{
+            this.lista.unshift(node);
+        }
+    }
     moveTo(node, nodePos){
         if(node.canMove){
-            this.lista.push(node);
+            this.mPush(node);
             node.canMove = false;
             nodePos.addChild(node);
         }

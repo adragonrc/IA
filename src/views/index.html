@@ -109,6 +109,7 @@
         }
 
         var mMaze = new Maze(map, started, ending);
+        mMaze.algoritmo = 1;
         mMaze.f(started);
         printPath(mMaze.ending.parent, rows, cols);
     }
