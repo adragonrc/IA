@@ -1,0 +1,42 @@
+body{
+    font-family:  cursive; 
+    
+    background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2C5364, #203A43, #0F2027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.inicio{
+    background-color: red;
+    margin: 2px;
+    width: 10px;
+    height: 10px;
+}
+tr {
+    border: #203A43 2px solid;
+} 
+td {
+    border: #203A43 2px solid;
+}
+table {
+    border: black 5px solid;
+}
+
+.final{
+    background-color: blue;
+    margin: 2px;
+    width: 20px;
+    height: 20px;
+}
+.camino{
+    background-color: white;
+    margin: 2px;
+    width: 20px;
+    height: 20px;
+}
+
+.obstaculo{
+    background-color: black;
+    margin: 2px;
+    width: 20px;
+    height: 20px;
+}

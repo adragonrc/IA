@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA</title>
+    
+    <%- include('./partials/head.html') %>
+</head>
+<body>
+    <%- include('./partials/navbar.html') %>
+    <div class="container p-5" >
+        <div class="row">
+            <div class="card col-sm" style="width: 18rem;">
+                <div class="card-header">
+                    <h4 class="card-title">Selecione um algoritmo</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" checked>
+                            <label class="form-check-label" for="inlineRadio1">
+                                <h4>Busca em profundidade</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2">
+                            <label class="form-check-label" for="inlineRadio2">
+                                <h4>Busca em largura</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3">
+                            <label class="form-check-label" for="inlineRadio3">
+                                <h4>Busca Best-First Search</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4">
+                            <label class="form-check-label" for="inlineRadio4">
+                                <h4>Busca A*</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5"
+                                value="Hill Climbing">
+                            <label class="form-check-label" for="inlineRadio5">
+                                <h4>Hill Climbing</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row" style="text-align: center; align-items: center; align-self: center;">
+                        <a class="btn btn-primary" href="#table" onclick="readImput()">Executar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <textarea id="textArea" cols="40" placeholder="Ingresa el imput" rows="20"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-5" id="table">
+        <h1 id= "tituloTabla" style="color: white; text-align: center; margin-bottom: 15px;"></h1>
+        <h2 id= "subTitleTabla" style="color: seashell; text-align: center; margin-bottom: 15px;"></h2>
+        <table style="width: 100%; height: 100%;">
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+    <%- include('./partials/footer.html') %>
+</body>
+</html>
+<%- include('./partials/Jsons.html') %>
+
+<script>
+    function getAlgortim(){
+        if (document.getElementById('inlineRadio1').checked) {
+           return 1;
+        }
+        if (document.getElementById('inlineRadio2').checked) {
+           return 2;
+        }
+        if (document.getElementById('inlineRadio3').checked) {
+           return 3;
+        }
+        if (document.getElementById('inlineRadio4').checked) {
+           return 4;
+        }
+        if (document.getElementById('inlineRadio5').checked) {
+           return 5;
+        }
+    }
+
+    function clearTable(){
+        while (tbody.hasChildNodes()){
+            tbody.removeChild(tbody.lastChild);
+        }
+    }
+
+    function readImput(){
+        clearTable();
+        var algoritmo = getAlgortim();
+        var input = document.getElementById('textArea').value;
+        var tbody = document.getElementById('tbody');
+        var rows = 0;
+        var cols = 0;
+        var pos = 0;
+        while(input[pos] != ' ' && pos<input.length){
+            rows = parseInt(10*rows) + parseInt(input[pos]);
+            pos++;
+        }
+        pos ++;
+        while(input[pos] != '\n' && pos<input.length){
+            cols = parseInt(10*cols) + parseInt(input[pos]);
+            pos++;
+        }
+        pos++;
+
+        var map = new Array(rows + 2);
+        map[0] = new Array(cols +2);
+        map[rows + 1] = new Array(cols +2);
+        for(var i = 0; i< cols+2; i++ ){
+            map[0][i] = new Node('-', -1, 0, i);
+            map[rows + 1][i] = new Node('-', -1, rows + 1, i);
+        }
+        var started;
+        var ending;
+
+        for(var i=1; i <= rows; i += 1){
+            var fila = "<tr>";
+            
+            map[i] = new Array(cols + 2);
+            map[i][0] = new Node('-', -1, i, 0);
+
+            for(var j = 1; j <= cols; j+=1){
+                //add col
+                var node = new Node(input[pos], pos, i, j);
+                var c = input[pos];
+                var typeClass;
+                if(c == '*'){
+                    typeClass ="camino";
+                }else{
+                    if(c == '-'){
+                        typeClass ="obstaculo";
+                    }else{
+                        if(c == '#'){
+                            started = node;
+                            typeClass ="inicio";
+                        }else{
+                            if(c == '$'){
+                                typeClass ="final";
+                                ending = node;
+                            }
+                        }
+                    }
+                }
+                map[i][j] = node;
+                fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'></td>");
+                pos += 1;
+            }
+            
+            map[i][cols+ 1] = new Node('-', -1, i, cols + 1);
+            fila = fila.concat("</tr>");
+            tbody.insertAdjacentHTML('beforeend', fila);
+            //add row
+            pos += 1;
+        }
+
+        var mMaze = new Maze(map, started, ending);
+        mMaze.algoritmo = algoritmo;
+
+        var title = mMaze.execute();
+
+        document.getElementById('subTitleTabla').innerText= "Tempo despendido: " + mMaze.time;
+        document.getElementById('tituloTabla').innerText= title;
+        if(algoritmo != 5) 
+            printPath(mMaze.ending.parent, rows, cols);
+        else printPath(mMaze.nodeFin, rows, cols);
+    }
+    
+    function printPath(nodo, rows, cols){
+      //  console.log("length", path.length);
+        while(nodo != null && nodo.c != '#'){
+          //  console.log("move to: " , path[i]);
+            console.log("parent: " , nodo.id);
+            document.getElementById(nodo.id).style.backgroundColor = 'yellow';
+            nodo = nodo.parent;
+        }
+    }
+</script>

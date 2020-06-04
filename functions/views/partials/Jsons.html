@@ -1,0 +1,225 @@
+<script>
+    function calculaDistancia(nodo1, nodo2){
+        var distX = parseInt(nodo1.x - nodo2.x); 
+        var distY = parseInt(nodo1.y - nodo2.y); 
+        return Math.sqrt(parseInt(distX*distX + distY*distY));
+    }
+    function calculaDistancia2(nodo1, nodo2){
+        var distX = parseInt(nodo1.x - nodo2.x);
+        var distY = parseInt(nodo1.y - nodo2.y);
+        return Math.sqrt(parseInt(distX*distX + distY*distY)) + nodo1.grado;
+    }
+    
+    
+    function sortingNodes(nodo1, nodo2){
+        return nodo2.distancia - nodo1.distancia;
+    }
+
+    class Node{
+        constructor(c, id, x, y){
+            this.c = c;
+            this.canMove =  c !='-' && c !='#';
+            this.id = id;
+            this.x = x;
+            this.y = y;
+            this.parent = null;
+            this.childs = new Array();
+            this.grado = 0;
+        }
+        isFin(){
+            return this.c == '$';
+        }
+        addChild(child){
+            this.childs.push(child);
+            child.parent = this
+        }
+    }
+
+    class Maze{        
+        constructor(map, start, ending) {
+            this.map = map;
+            this.start = start;
+            this.ending = ending;
+            this.start.distancia = calculaDistancia(start, ending);
+            this.lista = new Array();
+            this.algoritmo = 0;
+            start.grado = 1;
+            this.time = 0;
+        }
+        
+        insertar(nodo){            
+            /*
+            for(var i = this.lista.length - 1; i > -1; i--){
+                if(nodo.distancia < this.lista[i].distancia){
+                    this.lista.splice(i, 0, nodo);
+                    return;
+                }
+            }*/
+            this.lista.push(nodo);
+            this.lista.sort(sortingNodes);
+        }
+        
+        isfin(point){
+            return this.map[point.x][point.y].c == '$';
+        }
+        moverTop(node){
+            return this.map[node.x-1][node.y];
+        }
+        moverBott(node){
+            return this.map[node.x+1][node.y];
+        }
+        moverRigth(node){
+            return this.map[node.x][node.y+1];
+        }
+        moverLefth(node){
+            return this.map[node.x][node.y-1];
+        }
+        mPush(node){
+            if(this.algoritmo == 1){
+                this.lista.push(node);
+            }else{
+                this.lista.unshift(node);
+            }
+        }
+        moveTo1(node, nodePos){
+            if(node.canMove){
+                esta.mPush( nodo ) ;
+                nodo.canMove = falso ;
+                nodePos.addChild( nodo ) ;
+            }
+        }
+        
+        moveTo(node, nodePos){
+            if(node.canMove){
+                
+                if(this.algoritmo==3){
+                    node.distancia  = calculaDistancia(node, this.ending);
+                }else{
+                    node.distancia  = calculaDistancia2(node, this.ending);
+                      node.grado = nodePos.grado + 1;
+                }
+                node.canMove = false;
+
+                this.insertar(node);
+                
+                nodePos.addChild(node);
+                
+            }
+        }
+        moveTo1(nodo, nodePos){
+            if(nodo.canMove){
+                this.mPush( nodo ) ;
+                nodo.canMove = false;
+                nodePos.addChild( nodo ) ;
+            }
+        }
+        moveTo2(mList, nodo){
+            if(nodo.canMove){
+                nodo.distancia  = calculaDistancia(nodo, this.ending);
+                mList.push(nodo);
+                nodo.canMove = false;
+            }
+        }
+        
+        hillClimbing(nodePos){
+            this.time++;
+            if(nodePos == null){
+                return;
+            }
+            if(nodePos.isFin()){
+                return;
+            }
+            this.nodeFin = nodePos;
+            
+            var mList = new Array();
+            var node = this.moverTop(nodePos);
+            this.moveTo2(mList, node);
+            node = this.moverRigth(nodePos);
+            this.moveTo2(mList, node);
+            node = this.moverLefth(nodePos);
+            this.moveTo2(mList, node);
+            node = this.moverBott(nodePos);
+            this.moveTo2(mList, node);
+
+            mList.sort(sortingNodes);
+            
+            node = mList.pop();
+            if(nodePos.distancia > node.distancia) {
+                nodePos.addChild(node);
+                return this.hillClimbing(node);    
+            }
+            return null;
+        }
+        buscaInform(nodePos){
+            this.time++;
+            if(nodePos.isFin()){
+                return true;
+            }
+            var node = this.moverTop(nodePos);
+            this.moveTo(node, nodePos);
+            node = this.moverRigth(nodePos);
+            this.moveTo(node, nodePos);
+            node = this.moverLefth(nodePos);
+            this.moveTo(node, nodePos);
+            node = this.moverBott(nodePos);
+            this.moveTo(node, nodePos);
+
+            return this.buscaInform(this.lista.pop());    
+        }
+
+        buscaCiega(nodePos){
+            this.time++;
+            if(nodePos.isFin()){
+                return true;
+            }
+
+            var node = this.moverBott(nodePos);
+            this.moveTo1(node, nodePos);
+            node = this.moverLefth(nodePos);
+            this.moveTo1(node, nodePos);
+            node = this.moverTop(nodePos);
+            this.moveTo1(node, nodePos);
+            node = this.moverRigth(nodePos);
+            this.moveTo1(node, nodePos);
+            
+            return this.buscaCiega(this.lista.pop());
+        }
+
+        execute(){
+            switch(this.algoritmo) {
+                case 1:
+                    this.buscaCiega(this.start);
+                    return "Busqua em Profundidade";
+                case 2:
+                    this.buscaCiega(this.start);
+                    return "Busqua em Largura";
+                case 3:
+                    this.buscaInform(this.start);
+                    
+                    return "Busqua BFS";
+                case 4:
+                    this.buscaInform(this.start);
+                    return "Busqua A*";
+                case 5:
+                    this.hillClimbing(this.start)
+                    return "Busqua Hill Climbing";
+                default:
+                    return "Algoritmo no seleccionado";
+                }
+        }
+    }    
+              /*var mList = new Array();
+
+            var node = this.moverTop(nodePos);
+            this.moveTo2(mList, node);
+            node = this.moverRigth(nodePos);
+            this.moveTo2(mList, node);
+            node = this.moverLefth(nodePos);
+            this.moveTo2(mList, node);
+            node = this.moverBott(nodePos);
+            this.moveTo2(mList, node);
+
+            mList.sort(sortingNodes);
+*/
+</script>
+
