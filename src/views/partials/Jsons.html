@@ -40,10 +40,11 @@
             this.map = map;
             this.start = start;
             this.ending = ending;
-            this.start.distancia = 0;
+            this.start.distancia = calculaDistancia(start, ending);
             this.lista = new Array();
             this.algoritmo = 0;
             start.grado = 1;
+            this.time = 0;
         }
         
         insertar(nodo){            
@@ -114,15 +115,21 @@
         }
         moveTo2(mList, nodo){
             if(nodo.canMove){
-                mList.push( nodo ) ;
+                nodo.distancia  = calculaDistancia(nodo, this.ending);
+                mList.push(nodo);
                 nodo.canMove = false;
             }
         }
-        
         hillClimbing(nodePos){
-            if(nodePos.isFin()){
-                return true;
+            this.time++;
+            if(nodePos == null){
+                return;
             }
+            if(nodePos.isFin()){
+                this.nodeFin = nodePos;
+                return;
+            }
+            this.nodeFin = nodePos;
             
             var mList = new Array();
             var node = this.moverTop(nodePos);
@@ -136,18 +143,25 @@
 
             mList.sort(sortingNodes);
 
-            while(mList.length>0){
-                node = mList.pop();
-                nodePos.addChild(node) ;
-                this.lista.push(node);
+            if(mList.length==0) return; 
+            
+            node = mList.pop();
+            if(nodePos.distancia > node.distancia) {
+                nodePos.addChild(node);
+                return this.hillClimbing(node);    
             }
-
-            return this.hillClimbing(this.lista.pop());    
+            return;
         }
         buscaInform(nodePos){
-            if(nodePos.isFin()){
-                return true;
+            this.time++;
+            if(nodePos == null){
+                return;
             }
+            if(nodePos.isFin()){
+                this.nodeFin = nodePos;
+                return;
+            }
+            this.nodeFin = nodePos;
             var node = this.moverTop(nodePos);
             this.moveTo(node, nodePos);
             node = this.moverRigth(nodePos);
@@ -161,9 +175,15 @@
         }
 
         buscaCiega(nodePos){
-            if(nodePos.isFin()){
-                return true;
+            this.time++;
+            if(nodePos == null){
+                return;
             }
+            if(nodePos.isFin()){
+                this.nodeFin = nodePos;
+                return;
+            }
+            this.nodeFin = nodePos;
 
             var node = this.moverBott(nodePos);
             this.moveTo1(node, nodePos);

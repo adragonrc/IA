@@ -11,41 +11,57 @@
     <%- include('./partials/navbar.html') %>
     <div class="container p-5" >
         <div class="row">
-            <div class="col-sm" style="color: aliceblue;">
-                <div class="row">
-                    <div class="form-check form-check-inline ">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1">
-                        <label class="form-check-label" for="inlineRadio1"><h3>Profundidad</h3></label>
-                    </div>
+            <div class="card col-sm" >
+                <div class="card-header">
+                    <h4 class="card-title">Selecione um algoritmo</h4>
                 </div>
-                <div class="row">
-                    <div class="form-check form-check-inline ">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2">
-                        <label class="form-check-label" for="inlineRadio2"><h3>largura</h3></label>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" checked>
+                            <label class="form-check-label" for="inlineRadio1">
+                                <h4>Busca em profundidade</h4>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="row" >
-                    <div class="form-check form-check-inline ">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3">
-                        <label class="form-check-label" for="inlineRadio3"><h3>Best-First</h3></label>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2">
+                            <label class="form-check-label" for="inlineRadio2">
+                                <h4>Busca em largura</h4>
+                            </label>
+                        </div>
                     </div>
-                </div><div class="row">
-                    <div class="form-check form-check-inline ">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4">
-                        <label class="form-check-label" for="inlineRadio4"><h3>A*</h3></label>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3">
+                            <label class="form-check-label" for="inlineRadio3">
+                                <h4>Busca Best-First Search</h4>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-check form-check-inline ">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="Hill Climbing">
-                        <label class="form-check-label" for="inlineRadio5"><h3>Hill Climbing</h3></label>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4">
+                            <label class="form-check-label" for="inlineRadio4">
+                                <h4>Busca A*</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-check form-check-inline ">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5"
+                                value="Hill Climbing">
+                            <label class="form-check-label" for="inlineRadio5">
+                                <h4>Hill Climbing</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row" style="text-align: center; align-items: center; align-self: center;">
+                        <a class="btn btn-primary" href="#table" onclick="readImput()">Executar</a>
                     </div>
                 </div>
             </div>
-            <div class="col-sm" >
-                <a class="btn btn-primary" href="#table" onclick="readImput()" >ir a la tabla</a>
-            </div>
-            
             <div class="col-sm">
                 <textarea id="textArea" cols="40" placeholder="Ingresa el imput" rows="20"></textarea>
             </div>
@@ -54,12 +70,15 @@
 
     <div class="container p-5" id="table">
         <h1 id= "tituloTabla" style="color: white; text-align: center; margin-bottom: 15px;"></h1>
+        <h2 id= "subTitleTabla" style="color: seashell; text-align: center; margin-bottom: 15px;"></h2>
+        <h2 id= "subTitleTabla2" style="color: seashell; text-align: center; margin-bottom: 15px;"></h2>
         <table style="width: 100%; height: 100%;">
             <tbody id="tbody">
 
             </tbody>
         </table>
     </div>
+    <%- include('./partials/footer.html') %>
 </body>
 </html>
 <%- include('./partials/Jsons.html') %>
@@ -150,7 +169,7 @@
                 fila = fila.concat("<td class ='"+typeClass+"' id = '"+pos+"'></td>");
                 pos += 1;
             }
-           
+            
             map[i][cols+ 1] = new Node('-', -1, i, cols + 1);
             fila = fila.concat("</tr>");
             tbody.insertAdjacentHTML('beforeend', fila);
@@ -160,18 +179,26 @@
 
         var mMaze = new Maze(map, started, ending);
         mMaze.algoritmo = algoritmo;
+
         var title = mMaze.execute();
+
+        document.getElementById('subTitleTabla').innerText= "Tempo despendido: " + mMaze.time + " it.";
         document.getElementById('tituloTabla').innerText= title;
-        printPath(mMaze.ending.parent, rows, cols);
+        
+        printPath(mMaze.nodeFin, rows, cols);
+        
+        document.getElementById(ending.id).style.backgroundColor = 'blue';
     }
     
     function printPath(nodo, rows, cols){
       //  console.log("length", path.length);
+        var tamCamino = 0;
         while(nodo != null && nodo.c != '#'){
-          //  console.log("move to: " , path[i]);
-            console.log("parent: " , nodo.id);
             document.getElementById(nodo.id).style.backgroundColor = 'yellow';
             nodo = nodo.parent;
+            tamCamino ++;
         }
+        document.getElementById('subTitleTabla2').innerText= "Comprimento do percurso: " + tamCamino + " u.";
+
     }
 </script>
