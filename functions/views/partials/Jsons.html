@@ -120,13 +120,13 @@
                 nodo.canMove = false;
             }
         }
-        
         hillClimbing(nodePos){
             this.time++;
             if(nodePos == null){
                 return;
             }
             if(nodePos.isFin()){
+                this.nodeFin = nodePos;
                 return;
             }
             this.nodeFin = nodePos;
@@ -142,19 +142,26 @@
             this.moveTo2(mList, node);
 
             mList.sort(sortingNodes);
+
+            if(mList.length==0) return; 
             
             node = mList.pop();
             if(nodePos.distancia > node.distancia) {
                 nodePos.addChild(node);
                 return this.hillClimbing(node);    
             }
-            return null;
+            return;
         }
         buscaInform(nodePos){
             this.time++;
-            if(nodePos.isFin()){
-                return true;
+            if(nodePos == null){
+                return;
             }
+            if(nodePos.isFin()){
+                this.nodeFin = nodePos;
+                return;
+            }
+            this.nodeFin = nodePos;
             var node = this.moverTop(nodePos);
             this.moveTo(node, nodePos);
             node = this.moverRigth(nodePos);
@@ -169,9 +176,14 @@
 
         buscaCiega(nodePos){
             this.time++;
-            if(nodePos.isFin()){
-                return true;
+            if(nodePos == null){
+                return;
             }
+            if(nodePos.isFin()){
+                this.nodeFin = nodePos;
+                return;
+            }
+            this.nodeFin = nodePos;
 
             var node = this.moverBott(nodePos);
             this.moveTo1(node, nodePos);

@@ -20,4 +20,3 @@ app.use(indexRoute);
 //static files
 
 exports.app = functions.https.onRequest(app);
-

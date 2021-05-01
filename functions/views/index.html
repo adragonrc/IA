@@ -11,7 +11,7 @@
     <%- include('./partials/navbar.html') %>
     <div class="container p-5" >
         <div class="row">
-            <div class="card col-sm" style="width: 18rem;">
+            <div class="card col-sm" >
                 <div class="card-header">
                     <h4 class="card-title">Selecione um algoritmo</h4>
                 </div>
@@ -71,6 +71,7 @@
     <div class="container p-5" id="table">
         <h1 id= "tituloTabla" style="color: white; text-align: center; margin-bottom: 15px;"></h1>
         <h2 id= "subTitleTabla" style="color: seashell; text-align: center; margin-bottom: 15px;"></h2>
+        <h2 id= "subTitleTabla2" style="color: seashell; text-align: center; margin-bottom: 15px;"></h2>
         <table style="width: 100%; height: 100%;">
             <tbody id="tbody">
 
@@ -181,20 +182,23 @@
 
         var title = mMaze.execute();
 
-        document.getElementById('subTitleTabla').innerText= "Tempo despendido: " + mMaze.time;
+        document.getElementById('subTitleTabla').innerText= "Tempo despendido: " + mMaze.time + " it.";
         document.getElementById('tituloTabla').innerText= title;
-        if(algoritmo != 5) 
-            printPath(mMaze.ending.parent, rows, cols);
-        else printPath(mMaze.nodeFin, rows, cols);
+        
+        printPath(mMaze.nodeFin, rows, cols);
+        
+        document.getElementById(ending.id).style.backgroundColor = 'blue';
     }
     
     function printPath(nodo, rows, cols){
       //  console.log("length", path.length);
+        var tamCamino = 0;
         while(nodo != null && nodo.c != '#'){
-          //  console.log("move to: " , path[i]);
-            console.log("parent: " , nodo.id);
             document.getElementById(nodo.id).style.backgroundColor = 'yellow';
             nodo = nodo.parent;
+            tamCamino ++;
         }
+        document.getElementById('subTitleTabla2').innerText= "Comprimento do percurso: " + tamCamino + " u.";
+
     }
 </script>
